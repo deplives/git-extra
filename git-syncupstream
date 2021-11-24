@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+UPSTREAM=$1
+
+git checkout .
+git checkout "$CURRENT_BRANCH"
+git fetch "$UPSTREAM"
+git merge "$UPSTREAM"/"$CURRENT_BRANCH"
+git push origin "$CURRENT_BRANCH"
