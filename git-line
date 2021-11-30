@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
-
 if [ -d ".git" ]; then
     AUTHOR=$(git config --local --get user.name)
     if [ -z "$AUTHOR" ]; then
