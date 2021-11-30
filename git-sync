@@ -1,17 +1,22 @@
 #!/usr/bin/env bash
 
 USAGE="\
-git sync [upstream name]
+git sync [upstream name] [upstream branch]
 "
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 UPSTREAM=$1
+UPSTREAM_BRANCH=$2
+
+if [ -z "$UPSTREAM_BRANCH" ]; then
+    UPSTREAM_BRANCH=$CURRENT_BRANCH
+fi
 
 if [ -n "$UPSTREAM" ]; then
     git checkout .
     git checkout "$CURRENT_BRANCH"
     git fetch "$UPSTREAM"
-    git merge "$UPSTREAM"/"$CURRENT_BRANCH"
+    git merge "$UPSTREAM"/"$UPSTREAM_BRANCH"
     git push origin "$CURRENT_BRANCH"
 else
     echo $USAGE
