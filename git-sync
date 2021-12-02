@@ -2,8 +2,10 @@
 set -e
 
 USAGE="\
+
 git sync [upstream name] [upstream branch]
 "
+
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 UPSTREAM=$1
@@ -20,5 +22,5 @@ if [ -n "$UPSTREAM" ]; then
     git merge "$UPSTREAM"/"$UPSTREAM_BRANCH"
     git push origin "$CURRENT_BRANCH"
 else
-    echo $USAGE
+    echo "$USAGE"
 fi
