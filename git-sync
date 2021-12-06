@@ -3,13 +3,14 @@ set -e
 
 USAGE="\
 
-git sync [upstream name] [upstream branch]
+git sync [upstream name] [upstream branch] [commit hash]
 "
 
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 UPSTREAM=$1
 UPSTREAM_BRANCH=$2
+UPSTREAM_COMMIT=$3
 
 if [ -z "$UPSTREAM_BRANCH" ]; then
     UPSTREAM_BRANCH=$CURRENT_BRANCH
@@ -20,7 +21,12 @@ if [ -n "$UPSTREAM" ]; then
     git checkout "$CURRENT_BRANCH"
     git fetch "$UPSTREAM"
     git merge "$UPSTREAM"/"$UPSTREAM_BRANCH"
-    git push origin "$CURRENT_BRANCH"
+    if [ -n "$UPSTREAM_COMMIT" ]; then
+        git reset --hard "$UPSTREAM_COMMIT"
+        git push --force origin "$CURRENT_BRANCH"
+    else
+        git push origin "$CURRENT_BRANCH"
+    fi
 else
     echo "$USAGE"
 fi
