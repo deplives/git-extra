@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-set -e
-
-if [ -d ".git" ]; then
-    git rev-parse HEAD
-else
-    echo "Not a git repository!"
-fi
