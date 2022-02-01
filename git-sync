@@ -6,6 +6,11 @@ USAGE="\
 git sync [upstream name] [upstream branch] [commit hash]
 "
 
+if ! git rev-parse --is-inside-work-tree &>/dev/null; then
+    echo "Not a git repository!" 1>&2
+    exit 1
+fi
+
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 UPSTREAM=$1
