@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+set -e
+
+if ! git rev-parse --is-inside-work-tree &>/dev/null; then
+    echo "Not a git repository!" 1>&2
+    exit 1
+fi
+
+USAGE="\
+
+git ingr <command> [options]
+--
+
+Usage
+
+    list                    List all available templates
+    use [template-name]     Use a template in this repo
+    new [template-name]     Generate template from .gitignore in current directory
+    del [template-name]     Delete a template
+"
+
+DOT_DIR=~/.gitignr
+GITIGNORE=.gitignore
+
+COMMAND=$1
+OPTION=$2
+
+if [[ ! -d "$DOT_DIR" ]]; then
+    mkdir -p "$DOT_DIR"
+fi
+
+case $COMMAND in
+"list")
+    ls -la $DOT_DIR | grep $GITIGNORE | awk ' {print $NF}' | awk -F '-' '{print $2}'
+    ;;
+"use")
+    if [[ -n "$OPTION" ]]; then
+        TemplateNum=$(ls -la $DOT_DIR | grep $GITIGNORE | grep $OPTION | wc -l | awk '{print $1}')
+        if [[ $TemplateNum == 0 ]]; then
+            echo "Template $OPTION not find!"
+        elif [[ $TemplateNum > 1 ]]; then
+            echo "Template $OPTION multiple!"
+            ls -la $DOT_DIR | grep $GITIGNORE | grep $OPTION | awk ' {print $NF}' | awk -F '-' '{print $2}'
+        elif [[ $TemplateNum == 1 ]]; then
+            TemplateFile=$DOT_DIR/$GITIGNORE-$OPTION
+            IgnoreFile=$GITIGNORE
+            if [[ -f "$IgnoreFile" ]]; then
+                read -p "The $IgnoreFile already exists, overwrite? (y/n)" input
+                if [[ "$input" != "y" ]]; then
+                    exit 1
+                fi
+            fi
+            cp $TemplateFile ./$GITIGNORE
+        fi
+    else
+        echo "$USAGE"
+    fi
+    ;;
+"new")
+    if [[ -n "$OPTION" ]]; then
+        IgnoreFile=$GITIGNORE
+        if [[ -f "$IgnoreFile" ]]; then
+            TemplateFile=$DOT_DIR/$GITIGNORE-$OPTION
+            if [[ -f "$TemplateFile" ]]; then
+                read -p "The template $OPTION already exists, overwrite? (y/n)" input
+                if [[ "$input" != "y" ]]; then
+                    exit 1
+                fi
+            fi
+            cp $IgnoreFile $TemplateFile
+        else
+            echo "$GITIGNORE not find!"
+        fi
+    else
+        echo "$USAGE"
+    fi
+    ;;
+"del")
+    if [[ -n "$OPTION" ]]; then
+        TemplateFile=$DOT_DIR/$GITIGNORE-$OPTION
+        if [[ -f "$TemplateFile" ]]; then
+            read -p "Delete template $OPTION? (y/n)" input
+            if [[ "$input" = "y" ]]; then
+                rm -rf $TemplateFile
+            fi
+        fi
+    else
+        echo "$USAGE"
+    fi
+    ;;
+*) echo "$USAGE" ;;
+
+esac
