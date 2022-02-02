@@ -17,16 +17,16 @@ UPSTREAM=$1
 UPSTREAM_BRANCH=$2
 UPSTREAM_COMMIT=$3
 
-if [ -z "$UPSTREAM_BRANCH" ]; then
+if [[ -z "$UPSTREAM_BRANCH" ]]; then
     UPSTREAM_BRANCH=$CURRENT_BRANCH
 fi
 
-if [ -n "$UPSTREAM" ]; then
+if [[ -n "$UPSTREAM" ]]; then
     git checkout .
     git checkout "$CURRENT_BRANCH"
     git fetch "$UPSTREAM"
     git merge "$UPSTREAM"/"$UPSTREAM_BRANCH"
-    if [ -n "$UPSTREAM_COMMIT" ]; then
+    if [[ -n "$UPSTREAM_COMMIT" ]]; then
         git reset --hard "$UPSTREAM_COMMIT"
         git push --force origin "$CURRENT_BRANCH"
     else
