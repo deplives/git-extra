@@ -8,15 +8,17 @@ fi
 
 USAGE="\
 
-git ingr <command> [options]
+git ignr <command> [options]
 --
 
 Usage
 
-    list                    List all available templates
-    use [template-name]     Use a template in this repo
-    new [template-name]     Generate template from .gitignore in current directory
-    del [template-name]     Delete a template
+    list                        List all available templates
+    show    [template-name]     Show a template
+    edit    [template-name]     Edit a template with vim
+    use     [template-name]     Use a template in this repo
+    new     [template-name]     Generate template from .gitignore in current directory
+    del     [template-name]     Delete a template
 "
 
 DOT_DIR=~/.gitignr
@@ -32,6 +34,26 @@ fi
 case $COMMAND in
 "list")
     ls -la $DOT_DIR | grep $GITIGNORE | awk ' {print $NF}' | awk -F '-' '{print $2}'
+    ;;
+"show")
+    if [[ -n "$OPTION" ]]; then
+        TemplateFile=$DOT_DIR/$GITIGNORE-$OPTION
+        if [[ -f "$TemplateFile" ]]; then
+            cat $TemplateFile
+        fi
+    else
+        echo "$USAGE"
+    fi
+    ;;
+"edit")
+    if [[ -n "$OPTION" ]]; then
+        TemplateFile=$DOT_DIR/$GITIGNORE-$OPTION
+        if [[ -f "$TemplateFile" ]]; then
+            vim $TemplateFile
+        fi
+    else
+        echo "$USAGE"
+    fi
     ;;
 "use")
     if [[ -n "$OPTION" ]]; then
