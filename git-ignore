@@ -8,7 +8,7 @@ fi
 
 USAGE="\
 
-git ignr <command> [options]
+git ignore <command> [options]
 --
 
 Usage
