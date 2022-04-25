@@ -67,12 +67,18 @@ case $COMMAND in
             TemplateFile=$DOT_DIR/$GITIGNORE-$OPTION
             IgnoreFile=$GITIGNORE
             if [[ -f "$IgnoreFile" ]]; then
-                read -p "The $IgnoreFile already exists, overwrite? (y/n)" input
-                if [[ "$input" != "y" ]]; then
+                read -p "The $IgnoreFile already exists, overwrite or merge? (y/n/m)" input
+                if [[ "$input" == "y" ]]; then
+                    cp $TemplateFile ./$GITIGNORE
+                elif [[ "$input" == "n" ]]; then
+                    exit 1
+                elif [[ "$input" == "m" ]]; then
+                    cat $GITIGNORE $TemplateFile | sort | uniq > $GITIGNORE
+                else
+                    echo 'input error, cancelled'
                     exit 1
                 fi
             fi
-            cp $TemplateFile ./$GITIGNORE
         fi
     else
         echo "$USAGE"
