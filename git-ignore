@@ -73,11 +73,13 @@ case $COMMAND in
                 elif [[ "$input" == "n" ]]; then
                     exit 1
                 elif [[ "$input" == "m" ]]; then
-                    cat $GITIGNORE $TemplateFile | sort | uniq > $GITIGNORE
+                    cat $GITIGNORE $TemplateFile | sort | uniq >$GITIGNORE
                 else
                     echo 'input error, cancelled'
                     exit 1
                 fi
+            else
+                cp $TemplateFile ./$GITIGNORE
             fi
         fi
     else
