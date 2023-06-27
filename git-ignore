@@ -23,6 +23,7 @@ Usage
 
 DOT_DIR=~/.gitignr
 GITIGNORE=.gitignore
+TEMPFILE=.git_ignore_temp
 
 COMMAND=$1
 OPTION=$2
@@ -67,13 +68,14 @@ case $COMMAND in
             TemplateFile=$DOT_DIR/$GITIGNORE-$OPTION
             IgnoreFile=$GITIGNORE
             if [[ -f "$IgnoreFile" ]]; then
-                read -p "The $IgnoreFile already exists, overwrite or merge? (y/n/m)" input
-                if [[ "$input" == "y" ]]; then
+                read -p "The $IgnoreFile already exists, Overwrite(o) Cancel(c) or Merge(m)?" input
+                if [[ "$input" == "o" ]]; then
                     cp $TemplateFile ./$GITIGNORE
-                elif [[ "$input" == "n" ]]; then
+                elif [[ "$input" == "c" ]]; then
                     exit 1
                 elif [[ "$input" == "m" ]]; then
-                    cat $GITIGNORE $TemplateFile | sort | uniq >$GITIGNORE
+                    awk '!seen[$0]++' $GITIGNORE $TemplateFile >$TEMPFILE
+                    mv $TEMPFILE $GITIGNORE
                 else
                     echo 'input error, cancelled'
                     exit 1
@@ -92,7 +94,7 @@ case $COMMAND in
         if [[ -f "$IgnoreFile" ]]; then
             TemplateFile=$DOT_DIR/$GITIGNORE-$OPTION
             if [[ -f "$TemplateFile" ]]; then
-                read -p "The template $OPTION already exists, overwrite? (y/n)" input
+                read -p "The template $OPTION already exists, Overwrite(o) or Cancel(c)?" input
                 if [[ "$input" != "y" ]]; then
                     exit 1
                 fi
